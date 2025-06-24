@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>선교 MBTI 테스트</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #f2f4f8;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      padding: 30px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin-top: 50px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .question {
+      margin: 20px 0;
+      padding: 15px;
+      border-left: 5px solid #2980b9;
+      background: #ecf0f1;
+      border-radius: 5px;
+    }
+    .options button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .options button:hover {
+      background: #2980b9;
+    }
+    #result {
+      margin-top: 30px;
+      background: #dff9fb;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 13px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧭 나의 선교 유형은?</h1>
+    <div id="quiz"></div>
+    <button onclick="calculateMBTI()">✅ 결과 보기</button>
+    <div id="result"></div>
+    <div class="footer">© 2025 Mission MBTI | by Your Ministry</div>
+  </div>
+
+  <script>
+    const questions = [
+      ["사람들과 함께 있으면 에너지가 생긴다", "혼자 있어야 충전된다"],
+      ["선교지에서 먼저 말을 건넨다", "먼저 주변을 관찰한다"],
+      ["여러 사람과 어울리는 걸 좋아함", "소수와 깊은 관계가 좋다"],
+      ["감정을 쉽게 표현함", "감정 표현에 조심스러움"],
+      ["모임에서 중심이 되는 걸 좋아함", "조용히 듣는 걸 좋아함"],
+
+      ["실제적인 문제 해결이 좋다", "아이디어로 방향을 보는 게 좋다"],
+      ["지금 할 수 있는 일에 집중", "될 수 있는 가능성에 집중"],
+      ["눈에 보이는 것에 의존함", "직관과 흐름을 중요시함"],
+      ["사실 중심적이다", "의미 중심적이다"],
+      ["반복을 잘 견딘다", "새로운 걸 시도하는 게 좋다"],
+
+      ["사실과 데이터로 판단", "사람 감정과 상황을 고려"],
+      ["직설적 피드백이 좋다", "돌려 말하는 걸 선호"],
+      ["논리로 결정", "공감으로 결정"],
+      ["정의가 우선", "배려가 우선"],
+      ["효율이 우선", "사람이 우선"],
+
+      ["계획을 세우고 움직임", "상황에 따라 유동적으로 움직임"],
+      ["마감이 있어야 집중됨", "촉박할 때 더 집중됨"],
+      ["정해진 규칙을 따름", "규칙에 유연한 편"],
+      ["계획대로 가는 걸 좋아함", "계획보다 흐름을 따름"],
+      ["정돈된 걸 선호함", "자유로운 분위기를 좋아함"],
+    ];
+
+    const answers = new Array(20).fill(null);
+
+    const quizDiv = document.getElementById("quiz");
+    questions.forEach((q, idx) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <p><strong>Q${idx + 1}</strong> ${q[0]} / ${q[1]}</p>
+        <div class="options">
+          <button onclick="select(${idx}, 'A')">A. ${q[0]}</button>
+          <button onclick="select(${idx}, 'B')">B. ${q[1]}</button>
+          <span id="selected${idx}" style="margin-left:10px;"></span>
+        </div>`;
+      quizDiv.appendChild(div);
+    });
+
+    function select(idx, value) {
+      answers[idx] = value;
+      document.getElementById("selected" + idx).innerText = `✔ 선택됨: ${value}`;
+    }
+
+    function calculateMBTI() {
+      if (answers.includes(null)) {
+        alert("모든 질문에 응답해주세요!");
+        return;
+      }
+
+      let type = "";
+      type += countAB(0, 5) === 'A' ? 'E' : 'I';
+      type += countAB(5, 10) === 'A' ? 'S' : 'N';
+      type += countAB(10, 15) === 'A' ? 'T' : 'F';
+      type += countAB(15, 20) === 'A' ? 'J' : 'P';
+
+      const resultText = missionaryTypes[type] || "결과를 찾을 수 없습니다.";
+      document.getElementById("result").innerHTML = `<h3>✨ 당신의 선교유형: ${type}</h3><p>${resultText}</p>`;
+    }
+
+    function countAB(start, end) {
+      let a = 0, b = 0;
+      for (let i = start; i < end; i++) {
+        if (answers[i] === 'A') a++;
+        else b++;
+      }
+      return a >= b ? 'A' : 'B';
+    }
+
+    const missionaryTypes = {
+      ENFP: "🔥 불붙는 전도자형 – 케냐<br>➤ 거리전도, 청년 캠프 사역",
+      ENTP: "💡 창의적 개척자형 – 방글라데시<br>➤ 문화사역, 미디어 활용",
+      ENFJ: "🌍 감성 리더형 – 미얀마<br>➤ 공동체 코디, 리더십 훈련",
+      ENTJ: "🧠 전략 선교사형 – 파라과이<br>➤ 훈련센터 운영, 조직 개척",
+      ESFP: "🎉 친화력 전도형 – 네팔<br>➤ 찬양사역, 현장 교제",
+      ESTP: "🚀 현장형 개척자 – 몽골<br>➤ 스포츠/캠프 사역",
+      ESFJ: "🍽 봉사형 리더 – 라오스<br>➤ 배식 사역, 지역 공동체",
+      ESTJ: "🧱 체계적 건설자 – 중국<br>➤ 건축/행정/운영",
+      INFP: "🌱 묵상형 중보자 – 튀니지<br>➤ 중보기도, 상담, 제자양육",
+      INFJ: "🕊 조용한 영향자 – 일본<br>➤ 문화사역, 글쓰기/매체",
+      INTP: "🔍 분석형 연구자 – 사우디<br>➤ 번역, 신학 자료",
+      INTJ: "📚 전략적 통찰자 – 인도<br>➤ 선교 전략, 훈련 설계",
+      ISFP: "🎨 감성 예술가형 – 알바니아<br>➤ 미술/영상/공예사역",
+      ISTP: "🛠 기술형 선교사 – 인도네시아<br>➤ 기술/수리/건축 지원",
+      ISFJ: "🤱 돌봄 사역자형 – 에티오피아<br>➤ 유아/여성/의료 사역",
+      ISTJ: "📏 성실 관리자형 – 탄자니아<br>➤ 회계, 시스템 운영",
+    };
+  </script>
+</body>
+</html>
